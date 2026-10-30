@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerPath - Student Career Guidance & Skill Gap Analysis</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0f5ff',
+                            100: '#e0ebff',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        purpleBrand: {
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(229, 231, 235, 0.8);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gradient-bg {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Notification / Toast Container -->
+    <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- MAIN NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
+                    <div class="w-10 h-10 rounded-xl gradient-bg flex items-center justify-center text-white font-bold text-xl shadow-md">
+                        <i class="fa-solid fa-compass"></i>
+                    </div>
+                    <span class="text-2xl font-extrabold gradient-text tracking-tight">CareerPath</span>
+                </div>
+
+                <!-- Desktop Navigation Links -->
+                <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                    <button onclick="navigateTo('home')" class="nav-link text-slate-600 hover:text-brand-600 transition">Home</button>
+                    <button onclick="navigateTo('careers')" class="nav-link text-slate-600 hover:text-brand-600 transition">Explore Careers</button>
+                    <button onclick="navigateTo('assessment')" class="nav-link text-slate-600 hover:text-brand-600 transition">Skill Assessment</button>
+                    <button onclick="navigateTo('roadmap')" class="nav-link text-slate-600 hover:text-brand-600 transition">Roadmaps</button>
+                </nav>
+
+                <!-- Auth / Profile Buttons -->
+                <div class="hidden md:flex items-center space-x-3" id="nav-auth-section">
+                    <!-- Dynamic rendering based on login state -->
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-slate-600 hover:text-slate-900 focus:outline-none p-2">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-2">
+            <button onclick="navigateTo('home')" class="block w-full text-left py-2 text-slate-700 font-medium">Home</button>
+            <button onclick="navigateTo('careers')" class="block w-full text-left py-2 text-slate-700 font-medium">Explore Careers</button>
+            <button onclick="navigateTo('assessment')" class="block w-full text-left py-2 text-slate-700 font-medium">Skill Assessment</button>
+            <button onclick="navigateTo('roadmap')" class="block w-full text-left py-2 text-slate-700 font-medium">Roadmaps</button>
+            <div class="pt-3 border-t border-slate-100 flex flex-col gap-2" id="mobile-auth-section">
+                <!-- Dynamic mobile auth -->
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER (SPA Sections) -->
+    <main class="flex-grow">
+
+        <!-- 1. HOME SECTION -->
+        <section id="sec-home" class="view-section">
+            <!-- Hero Section -->
+            <div class="relative overflow-hidden bg-gradient-to-b from-brand-50/60 via-white to-slate-50 py-20 lg:py-28">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                    <div class="text-center max-w-3xl mx-auto space-y-6">
+                        <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-100 text-brand-700 border border-brand-200">
+                            <i class="fa-solid fa-sparkles text-purpleBrand-500"></i> AI-Powered Student Career Guidance
+                        </span>
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 tracking-tight leading-tight">
+                            Discover Your Career. <br>
+                            <span class="gradient-text">Build Your Future.</span>
+                        </h1>
+                        <p class="text-lg text-slate-600 leading-relaxed font-normal">
+                            Evaluate your current technical skills, pinpoint industry missing skill gaps, and follow personalized learning roadmaps tailored for modern CSE tech roles.
+                        </p>
+                        <div class="flex flex-col sm:flex-row justify-center gap-4 pt-4">
+                            <button onclick="navigateTo('assessment')" class="gradient-bg text-white font-semibold px-8 py-3.5 rounded-xl shadow-lg shadow-brand-500/25 hover:opacity-95 transition transform hover:-translate-y-0.5">
+                                Start Free Assessment <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                            <button onclick="navigateTo('careers')" class="bg-white text-slate-700 hover:text-brand-600 font-semibold px-8 py-3.5 rounded-xl border border-slate-200 shadow-sm hover:border-brand-300 transition">
+                                Explore Roles
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="text-center mb-12">
+                    <h2 class="text-3xl font-bold text-slate-900">Why Choose CareerPath?</h2>
+                    <p class="text-slate-500 mt-2">Empowering college students with structured, data-driven career planning.</p>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                        <div class="w-12 h-12 rounded-xl bg-brand-100 text-brand-600 flex items-center justify-center text-xl mb-6">
+                            <i class="fa-solid fa-chart-pie"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Skill Gap Analysis</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Compare your current proficiency against benchmark requirements of top industries using interactive charts.
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purpleBrand-600 flex items-center justify-center text-xl mb-6">
+                            <i class="fa-solid fa-route"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Targeted Learning Roadmaps</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Get stage-by-stage learning tracks curated with curated docs, courses, and project milestones.
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl mb-6">
+                            <i class="fa-solid fa-bars-progress"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-3">Real-time Progress Tracking</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">
+                            Track completed topics dynamically and visualize your improvement score over time.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- How It Works Section -->
+            <div class="bg-white border-y border-slate-200 py-16">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="text-center mb-12">
+                        <h2 class="text-3xl font-bold text-slate-900">How CareerPath Works</h2>
+                        <p class="text-slate-500 mt-2">4 Simple Steps to Accelerate Your Career Preparation</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 relative">
+                        <div class="text-center p-6">
+                            <div class="w-12 h-12 rounded-full gradient-bg text-white font-bold flex items-center justify-center mx-auto mb-4 text-lg shadow">1</div>
+                            <h4 class="font-bold text-slate-800 text-lg mb-2">Select Career Target</h4>
+                            <p class="text-slate-500 text-sm">Choose from high-demand CSE tech domains.</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div class="w-12 h-12 rounded-full gradient-bg text-white font-bold flex items-center justify-center mx-auto mb-4 text-lg shadow">2</div>
+                            <h4 class="font-bold text-slate-800 text-lg mb-2">Assess Skill Levels</h4>
+                            <p class="text-slate-500 text-sm">Rate your current proficiency levels honestly.</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div class="w-12 h-12 rounded-full gradient-bg text-white font-bold flex items-center justify-center mx-auto mb-4 text-lg shadow">3</div>
+                            <h4 class="font-bold text-slate-800 text-lg mb-2">View Skill Gap</h4>
+                            <p class="text-slate-500 text-sm">Get instant breakdown of missing core skills.</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div class="w-12 h-12 rounded-full gradient-bg text-white font-bold flex items-center justify-center mx-auto mb-4 text-lg shadow">4</div>
+                            <h4 class="font-bold text-slate-800 text-lg mb-2">Follow Roadmap</h4>
+                            <p class="text-slate-500 text-sm">Master modules and track your readiness percentage.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. LOGIN & REGISTER SECTION -->
+        <section id="sec-auth" class="view-section hidden py-12">
+            <div class="max-w-md mx-auto px-4">
+                <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-xl">
+                    <!-- Auth Switcher Tabs -->
+                    <div class="flex border-b border-slate-200 mb-6">
+                        <button id="tab-login-btn" onclick="switchAuthTab('login')" class="w-1/2 pb-3 font-semibold text-center border-b-2 border-brand-600 text-brand-600">Student Login</button>
+                        <button id="tab-register-btn" onclick="switchAuthTab('register')" class="w-1/2 pb-3 font-semibold text-center text-slate-400 hover:text-slate-600">Register</button>
+                    </div>
+
+                    <!-- Login Form -->
+                    <form id="form-login" onsubmit="handleLogin(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Email Address</label>
+                            <input type="email" id="login-email" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm" placeholder="student@college.edu">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
+                            <input type="password" id="login-password" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none text-sm" placeholder="••••••••">
+                        </div>
+                        <div class="flex items-center justify-between text-xs">
+                            <label class="flex items-center text-slate-600">
+                                <input type="checkbox" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500 mr-2"> Remember me
+                            </label>
+                            <a href="#" onclick="toast('Password reset link sent to demo email', 'info')" class="text-brand-600 font-semibold hover:underline">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="w-full gradient-bg text-white font-semibold py-3 rounded-lg shadow hover:opacity-95 transition">Sign In</button>
+                        <div class="text-xs text-center text-slate-500 mt-4">
+                            Demo Admin: <span class="font-mono text-brand-600">admin@careerpath.edu</span> | Pass: <span class="font-mono text-brand-600">admin123</span>
+                        </div>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="form-register" onsubmit="handleRegister(event)" class="space-y-4 hidden">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Full Name</label>
+                            <input type="text" id="reg-name" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="Alex Johnson">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">College/University Email</label>
+                            <input type="email" id="reg-email" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="alex@university.edu">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Degree / Branch</label>
+                            <input type="text" id="reg-degree" required class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="B.Tech Computer Science">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Password</label>
+                            <input type="password" id="reg-password" required minlength="6" class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-brand-500 outline-none text-sm" placeholder="At least 6 characters">
+                        </div>
+                        <button type="submit" class="w-full gradient-bg text-white font-semibold py-3 rounded-lg shadow hover:opacity-95 transition">Create Student Account</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. CAREER SELECTION SECTION -->
+        <section id="sec-careers" class="view-section hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="mb-8 text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900">Explore Career Tracks</h2>
+                    <p class="text-slate-500 mt-1 text-sm">Select a target industry career role to start your skill assessment and gap analysis.</p>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="careers-grid-container">
+                <!-- Dynamic Career Cards Populated via JS -->
+            </div>
+        </section>
+
+        <!-- 4. SKILL ASSESSMENT SECTION -->
+        <section id="sec-assessment" class="view-section hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+                <div class="flex flex-col md:flex-row justify-between md:items-center gap-4 border-b border-slate-200 pb-6 mb-6">
+                    <div>
+                        <span class="text-xs font-bold text-brand-600 uppercase tracking-wider">Step 2: Self Assessment</span>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-1">Rate Your Proficiency Levels</h2>
+                        <p class="text-slate-500 text-sm">Selected Role: <span id="assessment-target-role" class="font-bold text-slate-800">Software Developer</span></p>
+                    </div>
+                    <button onclick="navigateTo('careers')" class="text-xs font-semibold text-slate-500 hover:text-brand-600 flex items-center gap-1">
+                        <i class="fa-solid fa-arrows-rotate"></i> Change Target Role
+                    </button>
+                </div>
+
+                <div class="space-y-6" id="assessment-skills-list">
+                    <!-- Dynamic Interactive Skill Proficiency Inputs -->
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-slate-200 flex justify-end gap-4">
+                    <button onclick="saveAssessmentAndAnalyze()" class="gradient-bg text-white font-semibold px-6 py-3 rounded-xl shadow hover:opacity-95 transition">
+                        Save & Generate Skill Gap Analysis <i class="fa-solid fa-chart-line ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. STUDENT DASHBOARD & SKILL GAP ANALYSIS SECTION -->
+        <section id="sec-dashboard" class="view-section hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900">Student Dashboard</h2>
+                    <p class="text-slate-500 text-sm">Welcome back, <span id="dash-user-name" class="font-bold text-slate-800">Student</span>! Here is your career readiness overview.</p>
+                </div>
+                <div class="bg-white border border-slate-200 rounded-xl px-4 py-2 flex items-center gap-3">
+                    <div class="text-xs text-slate-500">Target Role:</div>
+                    <div id="dash-target-role" class="font-bold text-brand-600 text-sm">Web Developer</div>
+                </div>
+            </div>
+
+            <!-- Dashboard Overview Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-xs font-semibold text-slate-400 uppercase">Overall Gap Score</div>
+                    <div id="dash-readiness-percent" class="text-3xl font-extrabold text-brand-600 mt-2">65%</div>
+                    <div class="text-xs text-slate-500 mt-1">Match with required skills</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-xs font-semibold text-slate-400 uppercase">Mastered Skills</div>
+                    <div id="dash-mastered-count" class="text-3xl font-extrabold text-emerald-600 mt-2">4 / 7</div>
+                    <div class="text-xs text-slate-500 mt-1">At Advanced/Intermediate level</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-xs font-semibold text-slate-400 uppercase">Missing / Gap Skills</div>
+                    <div id="dash-missing-count" class="text-3xl font-extrabold text-amber-500 mt-2">3 Skills</div>
+                    <div class="text-xs text-slate-500 mt-1">Requires focus & learning</div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="text-xs font-semibold text-slate-400 uppercase">Roadmap Progress</div>
+                    <div id="dash-roadmap-progress" class="text-3xl font-extrabold text-purpleBrand-600 mt-2">25%</div>
+                    <div class="text-xs text-slate-500 mt-1">Modules completed</div>
+                </div>
+            </div>
+
+            <!-- Charts & Gap Breakdown Grid -->
+            <div class="grid lg:grid-cols-2 gap-8 mb-8">
+                <!-- Skill Radar / Bar Visualization -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center justify-between">
+                        <span><i class="fa-solid fa-chart-radar text-brand-600 mr-2"></i> Skill Comparison Chart</span>
+                    </h3>
+                    <div class="relative h-72 w-full flex items-center justify-center">
+                        <canvas id="skillGapChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Missing vs Acquired Detailed Skill Breakdown -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center">
+                            <i class="fa-solid fa-list-check text-purpleBrand-600 mr-2"></i> Skill Gap Summary
+                        </h3>
+                        <div class="space-y-4 overflow-y-auto max-h-64 pr-2" id="dash-skill-gap-list">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                    <div class="pt-4 mt-4 border-t border-slate-100 text-right">
+                        <button onclick="navigateTo('roadmap')" class="gradient-bg text-white font-semibold text-sm px-5 py-2.5 rounded-lg shadow hover:opacity-95 transition">
+                            View Personalized Roadmap <i class="fa-solid fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. LEARNING ROADMAP SECTION -->
+        <section id="sec-roadmap" class="view-section hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm mb-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-200 pb-6 mb-6">
+                    <div>
+                        <span class="text-xs font-bold text-purpleBrand-600 uppercase tracking-wider">Custom Guidance Track</span>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-1">Personalized Learning Roadmap</h2>
+                        <p class="text-slate-500 text-sm">Follow structured stages to bridge identified skill gaps for <span id="roadmap-role-title" class="font-bold text-slate-800">Software Developer</span>.</p>
+                    </div>
+                    <div class="mt-4 sm:mt-0 flex items-center gap-3">
+                        <div class="text-right">
+                            <div class="text-xs text-slate-500">Overall Progress</div>
+                            <div id="roadmap-percentage-text" class="text-lg font-extrabold text-brand-600">0%</div>
+                        </div>
+                        <div class="w-16 bg-slate-100 rounded-full h-3 border border-slate-200 overflow-hidden">
+                            <div id="roadmap-progress-bar" class="gradient-bg h-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Stages Timeline Container -->
+                <div id="roadmap-stages-container" class="space-y-8">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ADMIN DASHBOARD SECTION -->
+        <section id="sec-admin" class="view-section hidden py-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+                <div class="flex justify-between items-center border-b border-slate-200 pb-6 mb-6">
+                    <div>
+                        <span class="text-xs font-bold text-red-600 uppercase tracking-wider">Administrative Panel</span>
+                        <h2 class="text-2xl font-bold text-slate-900 mt-1">Platform Admin Management</h2>
+                    </div>
+                    <span class="bg-red-100 text-red-700 font-bold text-xs px-3 py-1 rounded-full border border-red-200">Admin Mode</span>
+                </div>
+
+                <!-- Admin Tabs -->
+                <div class="flex space-x-4 border-b border-slate-200 mb-6">
+                    <button onclick="switchAdminTab('students')" id="admin-tab-students" class="pb-3 text-sm font-bold border-b-2 border-brand-600 text-brand-600">Registered Students</button>
+                    <button onclick="switchAdminTab('careers')" id="admin-tab-careers" class="pb-3 text-sm font-bold text-slate-400 hover:text-slate-600">Manage Career Tracks</button>
+                </div>
+
+                <!-- Tab 1: Students Table -->
+                <div id="admin-view-students" class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase">
+                                <th class="p-3">ID</th>
+                                <th class="p-3">Student Name</th>
+                                <th class="p-3">Email</th>
+                                <th class="p-3">Degree</th>
+                                <th class="p-3">Selected Career</th>
+                                <th class="p-3">Readiness</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-students-tbody" class="text-sm divide-y divide-slate-100">
+                            <!-- Dynamic Row Rendering -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Tab 2: Add / Manage Careers -->
+                <div id="admin-view-careers" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-slate-800">Current Platform Career Options</h4>
+                        <button onclick="openAddCareerModal()" class="gradient-bg text-white text-xs font-bold px-4 py-2 rounded-lg shadow hover:opacity-95">
+                            + Add New Career Role
+                        </button>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4" id="admin-careers-list">
+                        <!-- Dynamic rendering -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+            <div class="flex items-center space-x-2">
+                <span class="font-extrabold gradient-text text-sm">CareerPath</span>
+                <span>&copy; 2026 Student Career Guidance Platform</span>
+            </div>
+            <div class="flex space-x-6">
+                <a href="#" onclick="toast('College CS Project Demo', 'info')" class="hover:text-brand-600">Documentation</a>
+                <a href="#" onclick="toast('Built with HTML, Tailwind, JS, Flask & MySQL Architecture', 'info')" class="hover:text-brand-600">Architecture</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ADD CAREER MODAL (ADMIN) -->
+    <div id="modal-add-career" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-2xl border border-slate-200">
+            <h3 class="text-xl font-bold text-slate-900 mb-4">Add New Career Path</h3>
+            <form onsubmit="handleCreateCareer(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Career Role Name</label>
+                    <input type="text" id="new-career-title" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="e.g. AI / Machine Learning Engineer">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Short Description</label>
+                    <textarea id="new-career-desc" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500" rows="2" placeholder="Brief job role overview..."></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Required Core Skills (Comma Separated)</label>
+                    <input type="text" id="new-career-skills" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-brand-500" placeholder="Python, PyTorch, Linear Algebra, MLOps">
+                </div>
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeAddCareerModal()" class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-800">Cancel</button>
+                    <button type="submit" class="gradient-bg text-white text-xs font-bold px-4 py-2 rounded-lg shadow">Save Career Role</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN JAVASCRIPT APPLICATION LOGIC -->
+    <script>
+        /* ==========================================================================
+           DATA MODELS & INITIAL STATE (Simulating Backend Database Records)
+           ========================================================================== */
+        
+        const CAREER_DATA = [
+            {
+                id: 'software-dev',
+                title: 'Software Developer',
+                icon: 'fa-code',
+                color: 'text-blue-600 bg-blue-50',
+                description: 'Build robust scalable software applications using modern programming languages and object-oriented principles.',
+                requiredSkills: ['Data Structures & Algorithms', 'Java / C++', 'Git & GitHub', 'System Design', 'SQL & Databases', 'Testing & Debugging'],
+                roadmap: [
+                    {
+                        stage: 'Stage 1: Core Fundamentals',
+                        topics: [
+                            { id: 'sd-1', name: 'Master Data Structures (Arrays, Trees, Graphs)', link: 'https://www.geeksforgeeks.org/data-structures/' },
+                            { id: 'sd-2', name: 'Object-Oriented Programming Concepts', link: 'https://docs.oracle.com/javase/tutorial/java/concepts/' }
+                        ]
+                    },
+                    {
+                        stage: 'Stage 2: Version Control & Databases',
+                        topics: [
+                            { id: 'sd-3', name: 'Git Workflow & Branching Strategies', link: 'https://git-scm.com/doc' },
+                            { id: 'sd-4', name: 'SQL Query Optimization & Database Normalization', link: 'https://www.mysqltutorial.org/' }
+                        ]
+                    },
+                    {
+                        stage: 'Stage 3: Advanced Architecture',
+                        topics: [
+                            { id: 'sd-5', name: 'System Design Principles & Microservices', link: 'https://github.com/donnemartin/system-design-primer' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'web-dev',
+                title: 'Web Developer',
+                icon: 'fa-laptop-code',
+                color: 'text-purple-600 bg-purple-50',
+                description: 'Design and create responsive web applications using frontend standards and modern server technologies.',
+                requiredSkills: ['HTML5 / CSS3 / JavaScript', 'React / Vue.js', 'Node.js / Express', 'RESTful APIs', 'Tailwind CSS', 'Git & Deployment'],
+                roadmap: [
+                    {
+                        stage: 'Stage 1: Modern Web Foundations',
+                        topics: [
+                            { id: 'wd-1', name: 'Semantic HTML5, Responsive CSS Grid/Flexbox', link: 'https://developer.mozilla.org/' },
+                            { id: 'wd-2', name: 'JavaScript ES6+ Concepts & DOM Manipulation', link: 'https://javascript.info/' }
+                        ]
+                    },
+                    {
+                        stage: 'Stage 2: Frontend Frameworks & API Integration',
+                        topics: [
+                            { id: 'wd-3', name: 'React Component Architecture & Hooks', link: 'https://react.dev/' },
+                            { id: 'wd-4', name: 'Fetching RESTful APIs and State Management', link: 'https://axios-http.com/' }
+                        ]
+                    },
+                    {
+                        stage: 'Stage 3: Backend & Deployment',
+                        topics: [
+                            { id: 'wd-5', name: 'Node.js & Express REST API Server Development', link: 'https://expressjs.com/' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'data-analyst',
+                title: 'Data Analyst',
+                icon: 'fa-chart-pie',
+                color: 'text-emerald-600 bg-emerald-50',
+                description: 'Transform raw datasets into actionable business insights using statistical tools and visualization platforms.',
+                requiredSkills: ['Python (Pandas, NumPy)', 'SQL Data Extraction', 'PowerBI / Tableau', 'Statistics & Probability', 'Excel Data Modeling'],
+                roadmap: [
+                    {
+                        stage: 'Stage 1: Statistical & Excel Mastery',
+                        topics: [
+                            { id: 'da-1', name: 'Descriptive & Inferential Statistics', link: 'https://www.khanacademy.org/math/statistics-probability' },
+                            { id: 'da-2', name: 'Advanced Excel Pivot Tables & Formulas', link: 'https://support.microsoft.com/en-us/excel' }
+                        ]
+                    },
+                    {
+                        stage: 'Stage 2: Data Wrangling with Python & SQL',
+                        topics: [
+                            { id: 'da-3', name: 'SQL Joins, Aggregations, and Window Functions', link: 'https://mode.com/sql-tutorial/' },
+                            { id: 'da-4', name: 'Data Cleaning with Pandas DataFrames', link: 'https://pandas.pydata.org/docs/' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'cybersecurity',
+                title: 'Cybersecurity Analyst',
+                icon: 'fa-shield-halved',
+                color: 'text-rose-600 bg-rose-50',
+                description: 'Protect network infrastructures, conduct vulnerability assessments, and safeguard sensitive digital assets.',
+                requiredSkills: ['Computer Networking (TCP/IP)', 'Linux Administration', 'Ethical Hacking Fundamentals', 'SIEM Tools', 'Cryptography', 'Vulnerability Assessment'],
+                roadmap: [
+                    {
+                        stage: 'Stage 1: Networking & OS Security',
+                        topics: [
+                            { id: 'cs-1', name: 'Network Protocols TCP/IP, DNS, Firewalls', link: 'https://www.cybrary.it/' },
+                            { id: 'cs-2', name: 'Linux Command Line & Scripting Security', link: 'https://linuxjourney.com/' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'ui-ux',
+                title: 'UI/UX Designer',
+                icon: 'fa-pen-ruler',
+                color: 'text-pink-600 bg-pink-50',
+                description: 'Craft intuitive, user-centered product designs, wireframes, prototypes, and user experience flows.',
+                requiredSkills: ['Figma / Adobe XD', 'Wireframing & Prototyping', 'User Research & Persona Building', 'Design Systems & Typography', 'Usability Testing'],
+                roadmap: [
+                    {
+                        stage: 'Stage 1: UX Fundamentals',
+                        topics: [
+                            { id: 'ui-1', name: 'User Research & Information Architecture', link: 'https://www.nngroup.com/' },
+                            { id: 'ui-2', name: 'Interactive Prototyping in Figma', link: 'https://help.figma.com/' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'cloud-engineer',
+                title: 'Cloud Engineer',
+                icon: 'fa-cloud',
+                color: 'text-amber-600 bg-amber-50',
+                description: 'Deploy, automate, and manage scalable cloud computing infrastructures on AWS, Azure, or GCP.',
+                requiredSkills: ['AWS / Cloud Architecture', 'Docker & Kubernetes', 'Terraform (IaC)', 'CI/CD Pipelines', 'Linux Systems Administration'],
+                roadmap: [
+                    {
+                        stage: 'Stage 1: Cloud & Containerization',
+                        topics: [
+                            { id: 'ce-1', name: 'AWS Core Services (EC2, S3, VPC)', link: 'https://aws.amazon.com/training/' },
+                            { id: 'ce-2', name: 'Docker Containerization & Multi-stage Builds', link: 'https://docs.docker.com/' }
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        // Sample State Management
+        let state = {
+            currentUser: null, // null when logged out, or user object
+            selectedCareerId: 'web-dev',
+            assessments: {
+                // 'web-dev': { 'HTML5 / CSS3 / JavaScript': 3, 'React / Vue.js': 2, ... }
+            },
+            completedTopics: new Set(['wd-1']), // Completed roadmap topic IDs
+            registeredStudents: [
+                { id: 'STU101', name: 'David Smith', email: 'david@college.edu', degree: 'B.Tech CSE', target: 'Software Developer', readiness: '72%' },
+                { id: 'STU102', name: 'Sarah Jenkins', email: 'sarah@college.edu', degree: 'B.Tech IT', target: 'Web Developer', readiness: '60%' }
+            ]
+        };
+
+        let chartInstance = null; // Global Chart.js reference
+
+        /* ==========================================================================
+           ROUTING & VIEW MANAGEMENT
+           ========================================================================== */
+        function navigateTo(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.view-section').forEach(sec => sec.classList.add('hidden'));
+            
+            // Show requested section
+            const targetSec = document.getElementById(`sec-${sectionId}`);
+            if (targetSec) {
+                targetSec.classList.remove('hidden');
+                window.scrollTo(0, 0);
+            }
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+
+            // Render section specific views
+            if (sectionId === 'careers') renderCareersGrid();
+            if (sectionId === 'assessment') renderAssessmentPage();
+            if (sectionId === 'dashboard') renderDashboardPage();
+            if (sectionId === 'roadmap') renderRoadmapPage();
+            if (sectionId === 'admin') renderAdminPage();
+        }
+
+        /* ==========================================================================
+           AUTH MANAGEMENT (CLIENT-SIDE DEMO)
+           ========================================================================== */
+        function updateNavAuth() {
+            const container = document.getElementById('nav-auth-section');
+            const mobileContainer = document.getElementById('mobile-auth-section');
+
+            if (state.currentUser) {
+                const isAdmin = state.currentUser.isAdmin;
+                container.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        ${isAdmin ? `<button onclick="navigateTo('admin')" class="text-xs bg-red-50 text-red-600 border border-red-200 font-bold px-3 py-1.5 rounded-lg">Admin Panel</button>` : ''}
+                        <button onclick="navigateTo('dashboard')" class="text-xs bg-brand-50 text-brand-600 font-bold px-3 py-1.5 rounded-lg">
+                            <i class="fa-solid fa-user-graduate mr-1"></i> ${state.currentUser.name}
+                        </button>
+                        <button onclick="handleLogout()" class="text-xs text-slate-500 hover:text-slate-800 font-semibold">Logout</button>
+                    </div>
+                `;
+                mobileContainer.innerHTML = `
+                    <div class="font-bold text-slate-800 text-sm">Logged in as: ${state.currentUser.name}</div>
+                    ${isAdmin ? `<button onclick="navigateTo('admin')" class="text-left text-red-600 font-bold py-1">Admin Panel</button>` : ''}
+                    <button onclick="navigateTo('dashboard')" class="text-left text-brand-600 font-bold py-1">Dashboard</button>
+                    <button onclick="handleLogout()" class="text-left text-slate-500 font-semibold py-1">Logout</button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="navigateTo('auth'); switchAuthTab('login');" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition">Sign In</button>
+                    <button onclick="navigateTo('auth'); switchAuthTab('register');" class="gradient-bg text-white text-sm font-semibold px-4 py-2 rounded-lg shadow hover:opacity-95 transition">Register</button>
+                `;
+                mobileContainer.innerHTML = `
+                    <button onclick="navigateTo('auth'); switchAuthTab('login');" class="w-full text-center py-2 border border-slate-200 rounded-lg font-semibold">Sign In</button>
+                    <button onclick="navigateTo('auth'); switchAuthTab('register');" class="w-full text-center py-2 gradient-bg text-white rounded-lg font-semibold">Register</button>
+                `;
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('form-login');
+            const regForm = document.getElementById('form-register');
+            const loginBtn = document.getElementById('tab-login-btn');
+            const regBtn = document.getElementById('tab-register-btn');
+
+            if (tab === 'login') {
+                loginForm.classList.remove('hidden');
+                regForm.classList.add('hidden');
+                loginBtn.className = "w-1/2 pb-3 font-semibold text-center border-b-2 border-brand-600 text-brand-600";
+                regBtn.className = "w-1/2 pb-3 font-semibold text-center text-slate-400 hover:text-slate-600";
+            } else {
+                loginForm.classList.add('hidden');
+                regForm.classList.remove('hidden');
+                regBtn.className = "w-1/2 pb-3 font-semibold text-center border-b-2 border-brand-600 text-brand-600";
+                loginBtn.className = "w-1/2 pb-3 font-semibold text-center text-slate-400 hover:text-slate-600";
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            
+            if (email === 'admin@careerpath.edu') {
+                state.currentUser = { name: 'System Admin', email: email, isAdmin: true };
+                toast('Logged in as Administrator!', 'success');
+                updateNavAuth();
+                navigateTo('admin');
+            } else {
+                state.currentUser = { name: email.split('@')[0], email: email, isAdmin: false };
+                toast('Student Login Successful!', 'success');
+                updateNavAuth();
+                navigateTo('dashboard');
+            }
+        }
+
+        function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const degree = document.getElementById('reg-degree').value;
+
+            state.currentUser = { name, email, degree, isAdmin: false };
+            state.registeredStudents.push({
+                id: 'STU' + Math.floor(100 + Math.random() * 900),
+                name, email, degree, target: 'Web Developer', readiness: '0%'
+            });
+
+            toast('Registration completed successfully!', 'success');
+            updateNavAuth();
+            navigateTo('dashboard');
+        }
+
+        function handleLogout() {
+            state.currentUser = null;
+            toast('Logged out successfully', 'info');
+            updateNavAuth();
+            navigateTo('home');
+        }
+
+        /* ==========================================================================
+           CAREER SELECTION RENDER
+           ========================================================================== */
+        function renderCareersGrid() {
+            const container = document.getElementById('careers-grid-container');
+            container.innerHTML = CAREER_DATA.map(career => `
+                <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between hover:shadow-xl hover:border-brand-300 transition duration-300">
+                    <div>
+                        <div class="w-12 h-12 rounded-xl ${career.color} flex items-center justify-center text-xl mb-4">
+                            <i class="fa-solid ${career.icon}"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">${career.title}</h3>
+                        <p class="text-slate-600 text-xs leading-relaxed mb-4">${career.description}</p>
+                        
+                        <div class="mb-4">
+                            <span class="text-[11px] font-extrabold uppercase text-slate-400 tracking-wider block mb-2">Key Competencies:</span>
+                            <div class="flex flex-wrap gap-1.5">
+                                ${career.requiredSkills.map(s => `<span class="bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-md font-medium">${s}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="selectCareerTarget('${career.id}')" class="w-full mt-4 gradient-bg text-white text-sm font-semibold py-2.5 rounded-xl shadow hover:opacity-95 transition">
+                        Select Role & Start Assessment
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function selectCareerTarget(careerId) {
+            state.selectedCareerId = careerId;
+            const career = CAREER_DATA.find(c => c.id === careerId);
+            toast(`Target career set to ${career.title}`, 'success');
+            navigateTo('assessment');
+        }
+
+        /* ==========================================================================
+           SKILL ASSESSMENT LOGIC
+           ========================================================================== */
+        function renderAssessmentPage() {
+            const career = CAREER_DATA.find(c => c.id === state.selectedCareerId) || CAREER_DATA[0];
+            document.getElementById('assessment-target-role').innerText = career.title;
+
+            const container = document.getElementById('assessment-skills-list');
+            const savedLevels = state.assessments[career.id] || {};
+
+            container.innerHTML = career.requiredSkills.map((skill, idx) => {
+                const currentVal = savedLevels[skill] || 1; // Default beginner (1)
+                return `
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-sm">${idx + 1}. ${skill}</h4>
+                            <p class="text-xs text-slate-500">Rate your knowledge level for this standard core skill.</p>
+                        </div>
+                        <div class="flex items-center gap-2" id="rating-group-${idx}">
+                            ${[
+                                { label: 'None/Beginner', val: 1 },
+                                { label: 'Intermediate', val: 2 },
+                                { label: 'Advanced', val: 3 }
+                            ].map(level => `
+                                <button type="button" 
+                                    onclick="setSkillRating('${career.id}', '${skill}', ${level.val}, this)"
+                                    class="rating-btn-${idx} text-xs font-semibold px-3.5 py-2 rounded-lg border ${currentVal === level.val ? 'bg-brand-600 text-white border-brand-600' : 'bg-white text-slate-600 border-slate-300 hover:border-brand-400'} transition">
+                                    ${level.label}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function setSkillRating(careerId, skillName, ratingVal, btnElement) {
+            if (!state.assessments[careerId]) {
+                state.assessments[careerId] = {};
+            }
+            state.assessments[careerId][skillName] = ratingVal;
+
+            // Highlight active button in group
+            const parent = btnElement.parentElement;
+            parent.querySelectorAll('button').forEach(b => {
+                b.className = "text-xs font-semibold px-3.5 py-2 rounded-lg border bg-white text-slate-600 border-slate-300 hover:border-brand-400 transition";
+            });
+            btnElement.className = "text-xs font-semibold px-3.5 py-2 rounded-lg border bg-brand-600 text-white border-brand-600 transition";
+        }
+
+        function saveAssessmentAndAnalyze() {
+            toast('Assessment saved! Generating Skill Gap Analysis...', 'success');
+            navigateTo('dashboard');
+        }
+
+        /* ==========================================================================
+           DASHBOARD & CHART.JS ANALYSIS RENDER
+           ========================================================================== */
+        function renderDashboardPage() {
+            const career = CAREER_DATA.find(c => c.id === state.selectedCareerId) || CAREER_DATA[0];
+            const assessments = state.assessments[career.id] || {};
+
+            if (state.currentUser) {
+                document.getElementById('dash-user-name').innerText = state.currentUser.name;
+            }
+            document.getElementById('dash-target-role').innerText = career.title;
+
+            // Compute Gap Calculations
+            const totalSkills = career.requiredSkills.length;
+            let totalScore = 0;
+            let masteredCount = 0;
+            let missingSkills = [];
+
+            career.requiredSkills.forEach(skill => {
+                const level = assessments[skill] || 1; // Default 1
+                totalScore += level; // 1 = 33%, 2 = 66%, 3 = 100%
+                if (level >= 2) {
+                    masteredCount++;
+                } else {
+                    missingSkills.push(skill);
+                }
+            });
+
+            const maxPossible = totalSkills * 3;
+            const readinessPct = Math.round((totalScore / maxPossible) * 100);
+
+            // Update DOM Cards
+            document.getElementById('dash-readiness-percent').innerText = `${readinessPct}%`;
+            document.getElementById('dash-mastered-count').innerText = `${masteredCount} / ${totalSkills}`;
+            document.getElementById('dash-missing-count').innerText = `${missingSkills.length} Skills`;
+
+            // Calculate roadmap percentage
+            const totalRoadmapTopics = career.roadmap.reduce((acc, stage) => acc + stage.topics.length, 0);
+            const completedCount = career.roadmap.reduce((acc, stage) => {
+                return acc + stage.topics.filter(t => state.completedTopics.has(t.id)).length;
+            }, 0);
+            const roadmapPct = totalRoadmapTopics > 0 ? Math.round((completedCount / totalRoadmapTopics) * 100) : 0;
+            document.getElementById('dash-roadmap-progress').innerText = `${roadmapPct}%`;
+
+            // Render Breakdown List
+            const breakdownList = document.getElementById('dash-skill-gap-list');
+            breakdownList.innerHTML = career.requiredSkills.map(skill => {
+                const level = assessments[skill] || 1;
+                const pct = level === 1 ? 33 : level === 2 ? 66 : 100;
+                const statusColor = level === 3 ? 'text-emerald-600 bg-emerald-50' : level === 2 ? 'text-brand-600 bg-brand-50' : 'text-amber-600 bg-amber-50';
+                const statusText = level === 3 ? 'Advanced' : level === 2 ? 'Intermediate' : 'Gap (Beginner)';
+
+                return `
+                    <div class="p-3 border border-slate-100 rounded-xl bg-slate-50 flex flex-col space-y-1.5">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="font-bold text-slate-800">${skill}</span>
+                            <span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${statusColor}">${statusText}</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-brand-500 to-purpleBrand-500 h-full rounded-full" style="width: ${pct}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Render Chart
+            renderChart(career, assessments);
+        }
+
+        function renderChart(career, assessments) {
+            const ctx = document.getElementById('skillGapChart').getContext('2d');
+            
+            if (chartInstance) chartInstance.destroy();
+
+            const labels = career.requiredSkills.map(s => s.length > 15 ? s.substring(0, 15) + '...' : s);
+            const userLevels = career.requiredSkills.map(s => assessments[s] || 1);
+            const requiredLevels = career.requiredSkills.map(() => 3); // Benchmark 3 = Advanced
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Your Skill Proficiency',
+                            data: userLevels,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: '#2563eb',
+                            borderWidth: 1.5,
+                            borderRadius: 6
+                        },
+                        {
+                            label: 'Industry Benchmark',
+                            data: requiredLevels,
+                            backgroundColor: 'rgba(226, 232, 240, 0.6)',
+                            borderColor: '#94a3b8',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 3,
+                            ticks: {
+                                stepSize: 1,
+                                callback: function(value) {
+                                    if (value === 1) return 'Beginner';
+                                    if (value === 2) return 'Intermediate';
+                                    if (value === 3) return 'Advanced';
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        /* ==========================================================================
+           LEARNING ROADMAP LOGIC
+           ========================================================================== */
+        function renderRoadmapPage() {
+            const career = CAREER_DATA.find(c => c.id === state.selectedCareerId) || CAREER_DATA[0];
+            document.getElementById('roadmap-role-title').innerText = career.title;
+
+            const container = document.getElementById('roadmap-stages-container');
+
+            container.innerHTML = career.roadmap.map((stageObj, idx) => `
+                <div class="border border-slate-200 rounded-2xl p-6 bg-slate-50/50">
+                    <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg gradient-bg text-white text-xs flex items-center justify-center font-bold">${idx + 1}</span>
+                        ${stageObj.stage}
+                    </h3>
+                    <div class="space-y-3">
+                        ${stageObj.topics.map(topic => {
+                            const isChecked = state.completedTopics.has(topic.id);
+                            return `
+                                <div class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-between gap-4 hover:border-brand-300 transition">
+                                    <div class="flex items-center space-x-3">
+                                        <input type="checkbox" 
+                                            ${isChecked ? 'checked' : ''} 
+                                            onchange="toggleTopicCompletion('${topic.id}')"
+                                            class="w-5 h-5 rounded border-slate-300 text-brand-600 focus:ring-brand-500 cursor-pointer">
+                                        <span class="text-sm font-medium ${isChecked ? 'line-through text-slate-400' : 'text-slate-800'}">${topic.name}</span>
+                                    </div>
+                                    <a href="${topic.link}" target="_blank" rel="noopener" class="text-xs font-bold text-brand-600 hover:text-brand-800 flex items-center gap-1">
+                                        Docs <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                                    </a>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `).join('');
+
+            updateRoadmapProgress(career);
+        }
+
+        function toggleTopicCompletion(topicId) {
+            if (state.completedTopics.has(topicId)) {
+                state.completedTopics.delete(topicId);
+                toast('Topic marked incomplete', 'info');
+            } else {
+                state.completedTopics.add(topicId);
+                toast('Topic marked as completed!', 'success');
+            }
+            const career = CAREER_DATA.find(c => c.id === state.selectedCareerId) || CAREER_DATA[0];
+            renderRoadmapPage();
+        }
+
+        function updateRoadmapProgress(career) {
+            const total = career.roadmap.reduce((acc, stage) => acc + stage.topics.length, 0);
+            const completed = career.roadmap.reduce((acc, stage) => {
+                return acc + stage.topics.filter(t => state.completedTopics.has(t.id)).length;
+            }, 0);
+
+            const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+
+            document.getElementById('roadmap-percentage-text').innerText = `${pct}%`;
+            document.getElementById('roadmap-progress-bar').style.width = `${pct}%`;
+        }
+
+        /* ==========================================================================
+           ADMIN PANEL LOGIC
+           ========================================================================== */
+        function renderAdminPage() {
+            renderAdminStudents();
+            renderAdminCareers();
+        }
+
+        function renderAdminStudents() {
+            const tbody = document.getElementById('admin-students-tbody');
+            tbody.innerHTML = state.registeredStudents.map(student => `
+                <tr class="hover:bg-slate-50">
+                    <td class="p-3 font-mono text-xs text-slate-500">${student.id}</td>
+                    <td class="p-3 font-bold text-slate-800">${student.name}</td>
+                    <td class="p-3 text-slate-600">${student.email}</td>
+                    <td class="p-3 text-slate-600">${student.degree}</td>
+                    <td class="p-3"><span class="bg-brand-50 text-brand-600 text-xs font-semibold px-2.5 py-1 rounded-md">${student.target}</span></td>
+                    <td class="p-3 font-bold text-emerald-600">${student.readiness}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAdminCareers() {
+            const container = document.getElementById('admin-careers-list');
+            container.innerHTML = CAREER_DATA.map(c => `
+                <div class="p-4 border border-slate-200 rounded-xl bg-slate-50 flex justify-between items-start">
+                    <div>
+                        <h5 class="font-bold text-slate-800 text-sm">${c.title}</h5>
+                        <p class="text-xs text-slate-500 mt-1">${c.requiredSkills.length} Required Skills Defined</p>
+                    </div>
+                    <button onclick="toast('Role editing active', 'info')" class="text-xs font-bold text-slate-400 hover:text-brand-600">Edit</button>
+                </div>
+            `).join('');
+        }
+
+        function switchAdminTab(tab) {
+            const stuView = document.getElementById('admin-view-students');
+            const carView = document.getElementById('admin-view-careers');
+            const stuTab = document.getElementById('admin-tab-students');
+            const carTab = document.getElementById('admin-tab-careers');
+
+            if (tab === 'students') {
+                stuView.classList.remove('hidden');
+                carView.classList.add('hidden');
+                stuTab.className = "pb-3 text-sm font-bold border-b-2 border-brand-600 text-brand-600";
+                carTab.className = "pb-3 text-sm font-bold text-slate-400 hover:text-slate-600";
+            } else {
+                stuView.classList.add('hidden');
+                carView.classList.remove('hidden');
+                carTab.className = "pb-3 text-sm font-bold border-b-2 border-brand-600 text-brand-600";
+                stuTab.className = "pb-3 text-sm font-bold text-slate-400 hover:text-slate-600";
+            }
+        }
+
+        function openAddCareerModal() {
+            document.getElementById('modal-add-career').classList.remove('hidden');
+        }
+
+        function closeAddCareerModal() {
+            document.getElementById('modal-add-career').classList.add('hidden');
+        }
+
+        function handleCreateCareer(e) {
+            e.preventDefault();
+            const title = document.getElementById('new-career-title').value;
+            const desc = document.getElementById('new-career-desc').value;
+            const skillsStr = document.getElementById('new-career-skills').value;
+
+            const newRole = {
+                id: title.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+                title: title,
+                icon: 'fa-briefcase',
+                color: 'text-indigo-600 bg-indigo-50',
+                description: desc,
+                requiredSkills: skillsStr.split(',').map(s => s.trim()),
+                roadmap: [
+                    {
+                        stage: 'Stage 1: Core Fundamentals',
+                        topics: [{ id: 'custom-1', name: 'Fundamentals of ' + title, link: '#' }]
+                    }
+                ]
+            };
+
+            CAREER_DATA.push(newRole);
+            closeAddCareerModal();
+            toast(`New career role "${title}" added successfully!`, 'success');
+            renderAdminCareers();
+        }
+
+        /* ==========================================================================
+           TOAST NOTIFICATION SYSTEM
+           ========================================================================== */
+        function toast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toastEl = document.createElement('div');
+            
+            const bgClass = type === 'success' ? 'bg-emerald-600' : type === 'error' ? 'bg-rose-600' : 'bg-slate-800';
+            toastEl.className = `${bgClass} text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-lg transition-all duration-300 flex items-center gap-2 transform translate-x-10 opacity-0`;
+            toastEl.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check' : 'fa-circle-info'}"></i> ${message}`;
+
+            container.appendChild(toastEl);
+
+            setTimeout(() => {
+                toastEl.classList.remove('translate-x-10', 'opacity-0');
+            }, 10);
+
+            setTimeout(() => {
+                toastEl.classList.add('opacity-0', 'translate-x-10');
+                setTimeout(() => toastEl.remove(), 300);
+            }, 3000);
+        }
+
+        /* ==========================================================================
+           INITIALIZATION ON LOAD
+           ========================================================================== */
+        window.addEventListener('DOMContentLoaded', () => {
+            updateNavAuth();
+            navigateTo('home');
+
+            // Mobile menu toggle logic
+            document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+                document.getElementById('mobile-menu').classList.toggle('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
